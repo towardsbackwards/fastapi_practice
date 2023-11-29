@@ -4,8 +4,8 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+from auth.models import metadata
 from config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
-from models.models import metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

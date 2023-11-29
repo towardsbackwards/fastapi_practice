@@ -1,9 +1,8 @@
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
-from alembic import context
 
 from config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
 from models.models import metadata
@@ -19,7 +18,6 @@ config.set_section_option(section, "DB_NAME", DB_NAME)
 config.set_section_option(section, "DB_USER", DB_USER)
 config.set_section_option(section, "DB_PASS", DB_PASS)
 
-
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
@@ -30,6 +28,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = metadata
+
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

@@ -5,6 +5,7 @@ from auth.base_config import auth_backend
 from auth.manager import get_user_manager
 from auth.models import User
 from auth.schemas import UserRead, UserCreate
+from operations.router import router as router_operation
 
 app = FastAPI(
     title='Testing App'
@@ -38,3 +39,6 @@ def protected_route(user: User = Depends(current_user)):
 @app.get("/unprotected-route")
 def protected_route():
     return "Hello, anonymous user!"
+
+
+app.include_router(router_operation)

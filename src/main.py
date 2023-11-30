@@ -1,4 +1,10 @@
+import time
+
+import redis.asyncio as aioredis
 from fastapi import FastAPI, Depends
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
 from fastapi_users import FastAPIUsers
 
 from auth.base_config import auth_backend
@@ -41,4 +47,17 @@ def protected_route():
     return "Hello, anonymous user!"
 
 
+@app.get("/cached-route")
+@cache(expire=5)
+def protected_route():
+    time.sleep(2)
+    return "This page is cached"
+
+
 app.include_router(router_operation)
+
+
+@app.on_event("startup")
+async def startup_event():
+    redis = aioredis.from_url("redis://localhost", encoding='utf8', decode_responses=True)
+    FastAPICache.init(RedisBackend(redis), prefix='fastapi-cache')

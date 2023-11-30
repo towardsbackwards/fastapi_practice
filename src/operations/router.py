@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.get("/")
 async def get_specific_operations(
-    operation_type: str, session: AsyncSession = Depends(get_async_session)
+        operation_type: str, session: AsyncSession = Depends(get_async_session)
 ):
     try:
         query = select(operation).where(
@@ -29,7 +29,6 @@ async def get_specific_operations(
             if isinstance(e, ZeroDivisionError)
             else {"status": "error", "data": None, "details": "Something went wrong"},
         )
-
 
 
 @router.post("/")

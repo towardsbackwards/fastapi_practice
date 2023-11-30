@@ -10,6 +10,3 @@ class OperationCreate(BaseModel):
     instrument_type: str
     date: datetime
     type: str
-
-    class Config:
-        orm_mode = True

@@ -12,6 +12,7 @@ from auth.manager import get_user_manager
 from auth.models import User
 from auth.schemas import UserRead, UserCreate
 from operations.router import router as router_operation
+from tasks.routers import router as router_tasks
 
 app = FastAPI(
     title='Testing App'
@@ -55,6 +56,7 @@ def protected_route():
 
 
 app.include_router(router_operation)
+app.include_router(router_tasks)
 
 
 @app.on_event("startup")

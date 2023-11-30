@@ -5,6 +5,11 @@ alembic revision --autogenerate -m "Initial"
 alembic upgrade head
 redis-server
 
+### from src/:
+celery -A tasks.tasks:celery worker --loglevel=INFO
+celery -A tasks.tasks:celery flower
+
+
 start app:
 uvicorn main:app --reload
 

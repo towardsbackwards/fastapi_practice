@@ -1,6 +1,6 @@
 import time
 
-import redis.asyncio as aioredis
+import redis.asyncio as aioredis  # it's OK
 from fastapi import FastAPI, Depends
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
@@ -48,7 +48,7 @@ def protected_route():
 
 
 @app.get("/cached-route")
-@cache(expire=5)
+@cache(expire=300)
 def protected_route():
     time.sleep(2)
     return "This page is cached"

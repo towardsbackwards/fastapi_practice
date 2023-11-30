@@ -30,7 +30,7 @@ user = Table(
 )
 
 
-class User(SQLAlchemyBaseUserTable[int], Base):
+class User(SQLAlchemyBaseUserTable[int], Base):  # fastapi-users declarative requirement
     id = Column(Integer, primary_key=True)
     email = Column(String, nullable=False)
     username = Column(String, nullable=False)

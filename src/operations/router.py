@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,10 +13,23 @@ router = APIRouter(
 
 
 @router.get("/")
-async def get_specific_operations(operation_type: str, session: AsyncSession = Depends(get_async_session)):
-    query = select(operation).where(operation.c.type == operation_type)  # str(query) for debugging
-    result = await session.execute(query)
-    return result.mappings().all()
+async def get_specific_operations(
+    operation_type: str, session: AsyncSession = Depends(get_async_session)
+):
+    try:
+        query = select(operation).where(
+            operation.c.type == operation_type
+        )  # str(query) for debugging
+        result = await session.execute(query)
+        return result.mappings().all()
+    except (ZeroDivisionError, Exception) as e:
+        return HTTPException(
+            status_code=500,
+            detail={"status": "error", "data": None, "details": "Zero division error"}
+            if isinstance(e, ZeroDivisionError)
+            else {"status": "error", "data": None, "details": "Something went wrong"},
+        )
+
 
 
 @router.post("/")

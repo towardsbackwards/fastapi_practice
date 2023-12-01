@@ -1,4 +1,9 @@
-from fastapi import WebSocket, WebSocketDisconnect, APIRouter
+from fastapi import WebSocket, WebSocketDisconnect, APIRouter, Depends
+from sqlalchemy import insert, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from chat.models import Messages
+from database import async_session_maker, get_async_session
 
 router = APIRouter(
     prefix="/chat",
@@ -20,12 +25,31 @@ class ConnectionManager:
     async def send_personal_message(self, message: str, websocket: WebSocket):
         await websocket.send_text(message)
 
-    async def broadcast(self, message: str):
+    async def broadcast(self, message: str, add_to_db: bool):
         for connection in self.active_connections:
+            if add_to_db:
+                await self.add_message_to_db(message)
             await connection.send_text(message)
+
+    @staticmethod
+    async def add_message_to_db(message: str):
+        async with async_session_maker() as session:
+            stmt = insert(Messages).values(
+                message=message
+            )
+            await session.execute(stmt)
+            await session.commit()
 
 
 manager = ConnectionManager()
+
+
+@router.get("/last_messages")
+async def get_last_messages(session: AsyncSession = Depends(get_async_session)):
+    query = select(Messages).order_by(Messages.id)
+    messages = await session.execute(query)
+    messages_list = messages.all()
+    return [message[0].as_dict() for message in messages_list]
 
 
 @router.websocket("/ws/{client_id}")
@@ -34,7 +58,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
     try:
         while True:
             data = await websocket.receive_text()
-            await manager.broadcast(f"Client #{client_id} says: {data}")
+            await manager.broadcast(f"Client #{client_id} says: {data}", add_to_db=True)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_id} left the chat")
+        await manager.broadcast(f"Client #{client_id} left the chat", add_to_db=False)

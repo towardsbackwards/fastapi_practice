@@ -7,11 +7,13 @@ from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
 from fastapi_users import FastAPIUsers
 from starlette.middleware.cors import CORSMiddleware
+from starlette.staticfiles import StaticFiles
 
 from auth.base_config import auth_backend
 from auth.manager import get_user_manager
 from auth.models import User
 from auth.schemas import UserRead, UserCreate
+from frontend.pages.router import router as router_frontend
 from operations.router import router as router_operation
 from tasks.routers import router as router_tasks
 
@@ -58,6 +60,7 @@ def protected_route():
 
 app.include_router(router_operation)
 app.include_router(router_tasks)
+app.include_router(router_frontend)
 
 origins = [
     "http://localhost",
@@ -72,6 +75,9 @@ app.add_middleware(
     allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
                    "Authorization"],
 )
+
+app.mount("/static", StaticFiles(directory="src/frontend/static"), name="static")
+
 
 @app.on_event("startup")
 async def startup_event():

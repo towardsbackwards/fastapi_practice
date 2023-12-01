@@ -19,7 +19,7 @@ async def get_specific_operations(
     try:
         query = select(operation).where(
             operation.c.type == operation_type
-        )  # str(query) for debugging
+        )  # str(query) for debugging 
         result = await session.execute(query)
         return result.mappings().all()
     except (ZeroDivisionError, Exception) as e:

@@ -6,7 +6,11 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+from src.auth.models import *  # necessary for fill common metadata
+from src.operations.models import *  # necessary for fill common metadata
+from src.chat.models import *  # necessary for fill common metadata
 from src.database import metadata
+from src.database import Base
 from src.config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
 
 # this is the Alembic Config object, which provides
@@ -32,7 +36,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = metadata
+target_metadata = [metadata, Base.metadata]
 
 
 # other values from the config, defined by the needs of env.py,

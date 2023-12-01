@@ -13,6 +13,7 @@ from auth.base_config import auth_backend
 from auth.manager import get_user_manager
 from auth.models import User
 from auth.schemas import UserRead, UserCreate
+from chat.router import router as router_chat
 from frontend.pages.router import router as router_frontend
 from operations.router import router as router_operation
 from tasks.routers import router as router_tasks
@@ -61,6 +62,7 @@ def protected_route():
 app.include_router(router_operation)
 app.include_router(router_tasks)
 app.include_router(router_frontend)
+app.include_router(router_chat)
 
 origins = [
     "http://localhost",

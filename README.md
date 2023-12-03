@@ -15,3 +15,8 @@ uvicorn main:app --reload
 
 check redis storage:
 redis-cli --scan --pattern '*'
+
+
+steps[docker]:
+docker compose build
+docker compose up

@@ -14,6 +14,7 @@ from auth.manager import get_user_manager
 from auth.models import User
 from auth.schemas import UserRead, UserCreate
 from chat.router import router as router_chat
+from config import REDIS_HOST, REDIS_PORT
 from frontend.pages.router import router as router_frontend
 from operations.router import router as router_operation
 from tasks.routers import router as router_tasks
@@ -84,5 +85,5 @@ app.mount("/static", StaticFiles(directory="src/frontend/static"), name="static"
 
 @app.on_event("startup")
 async def startup_event():
-    redis = aioredis.from_url("redis://localhost", encoding='utf8', decode_responses=True)
-    FastAPICache.init(RedisBackend(redis), prefix='fastapi-cache')
+    redis = aioredis.from_url(f"redis://{REDIS_HOST}:{REDIS_PORT}", encoding="utf8", decode_responses=True)
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")

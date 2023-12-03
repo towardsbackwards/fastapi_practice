@@ -16,9 +16,11 @@ from auth.models import User
 from auth.schemas import UserRead, UserCreate
 from chat.router import router as router_chat
 from config import REDIS_HOST, REDIS_PORT
-from frontend.pages.router import router as router_frontend
+from frontend.pages.router import create_frontend_router
 from operations.router import router as router_operation
 from tasks.routers import router as router_tasks
+
+base_directory = os.path.dirname(os.path.realpath(__file__))
 
 app = FastAPI(
     title='Testing App'
@@ -63,13 +65,15 @@ def protected_route():
 
 app.include_router(router_operation)
 app.include_router(router_tasks)
-app.include_router(router_frontend)
 app.include_router(router_chat)
+app.include_router(create_frontend_router(base_directory))
 
 origins = [
     "http://localhost",
     "http://localhost:8000",
-    "http://127.0.0.1:8000"
+    "http://127.0.0.1:8000",
+    "http://0.0.0.0:8000",
+    "http://0.0.0.0:9999"
 ]
 
 app.add_middleware(
@@ -80,8 +84,6 @@ app.add_middleware(
     allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
                    "Authorization"],
 )
-
-base_directory = os.path.dirname(os.path.realpath(__file__))
 
 app.mount("/static", StaticFiles(directory=os.path.join(base_directory, "frontend/static")), name="static")
 

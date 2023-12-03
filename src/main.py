@@ -1,3 +1,4 @@
+import os
 import time
 
 import redis.asyncio as aioredis  # it's OK
@@ -80,7 +81,9 @@ app.add_middleware(
                    "Authorization"],
 )
 
-app.mount("/static", StaticFiles(directory="src/frontend/static"), name="static")
+base_directory = os.path.dirname(os.path.realpath(__file__))
+
+app.mount("/static", StaticFiles(directory=os.path.join(base_directory, "frontend/static")), name="static")
 
 
 @app.on_event("startup")
